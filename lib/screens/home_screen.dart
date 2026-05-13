@@ -40,7 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
     await ApiService.deleteShift(id);
     _loadShifts();
   }
-
+  
   // ── Supplement breakdown popup ────────────────────────────────────────────
   void _showSupplementBreakdown(BuildContext context, WorkerResult w) {
     final gold = Theme.of(context).colorScheme.primary;
@@ -69,7 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
             // 2. שורת חישוב סה"כ טיפים (בדומה לתוספת מינימום)
             _breakdownRow(
               'טיפים סה"כ',
-              '${w.hoursWorked.toStringAsFixed(2)} × ₪${w.tipPerHour.floor()} = ₪${w.tipAmount.floor()}',
+              '${w.hoursWorked.toStringAsFixed(2)} × ₪${w.tipPerHour.floor()} = ₪${w.tipAmount.toStringAsFixed(2)}',
               Colors.white,
               bold: true,
             ),
@@ -84,14 +84,15 @@ class _HomeScreenState extends State<HomeScreen> {
             
             // 4. חישוב פער
             if (hasGap) ...[
+              
               _breakdownRow(
                 'פער שעתי',
-                '₪${w.minHourly.floor()} - ₪${w.tipPerHour.floor()} = ₪${w.hourlyGap.floor()}/שעה',
+                '₪${w.minHourly.floor()} - ₪${w.tipPerHour.floor()} = ₪${w.hourlyGap.toStringAsFixed(0)}/שעה',
                 Colors.orangeAccent,
               ),
               _breakdownRow(
                 'תוספת מינימום',
-                '₪${w.hourlyGap.floor()} × ${w.hoursWorked.toStringAsFixed(1)} = ₪${(w.hourlyGap * w.hoursWorked).floor()}',
+                '₪${w.hourlyGap.floor()} × ${w.hoursWorked.toStringAsFixed(2)} = ₪${(w.hourlyGap.floor() * w.hoursWorked).toStringAsFixed(2)}',
                 Colors.orangeAccent,
               ),
               const SizedBox(height: 8),
@@ -218,6 +219,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
+        textDirection: TextDirection.rtl,          // ← שינוי כאן
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(label, style: const TextStyle(color: Colors.white54, fontSize: 13)),
@@ -425,7 +427,7 @@ class _HomeScreenState extends State<HomeScreen> {
           0: FlexColumnWidth(2.2), // שם - הכי ימני
           1: FlexColumnWidth(1.2), //  כניסה
           2: FlexColumnWidth(1.2), // יציאה
-          3: FlexColumnWidth(1.0), // שעות
+          3: FlexColumnWidth(1.2), // שעות
           4: FlexColumnWidth(1.8), // טיפים
           5: FlexColumnWidth(1.8), // השלמה
         },
@@ -452,7 +454,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   _cell(w.name, bold: true),             // נכנס לעמודה 0 (ימין)
                   _cell(w.startTime),                     // נכנס לעמודה 1
                   _cell(w.endTime),                       // נכנס לעמודה 2
-                  _cell(w.hoursWorked.toStringAsFixed(1)),  // נכנס לעמודה 3
+                  _cell(w.hoursWorked.toStringAsFixed(2)),  // נכנס לעמודה 3
                   _tipCell(w),                            // נכנס לעמודה 4
                   _supplementCell(w),                     // נכנס לעמודה 5   
                 ],

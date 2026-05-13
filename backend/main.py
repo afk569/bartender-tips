@@ -1,3 +1,5 @@
+import math
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
@@ -94,25 +96,23 @@ def calculate_shift(req: ShiftRequest):
             "total": 0.0,
         })
 
-    total_hours = round(sum(r["hours_worked"] for r in worker_results), 4)
+    total_hours = sum(r["hours_worked"] for r in worker_results)
     if total_hours == 0:
         raise HTTPException(status_code=400, detail="סך השעות לא יכול להיות אפס")
 
-    hourly_rate = round(req.total_amount / total_hours, 2)
+    hourly_rate = req.total_amount / total_hours
 
     for r in worker_results:
-        tip = round(r["hours_worked"] * hourly_rate, 2)
-        tip_per_hour = round(tip / r["hours_worked"], 2) if r["hours_worked"] > 0 else 0
-
-        # Minimum hourly gap calculation
-        hourly_gap = max(0.0, round(r["min_hourly"] - tip_per_hour, 2))
-        final_supplement = round(r["base_supplement"] + hourly_gap * r["hours_worked"], 2)
+        tip = r["hours_worked"] * hourly_rate
+        tip_per_hour = hourly_rate
+        hourly_gap = max(0, r["min_hourly"] - math.floor(tip_per_hour))
+        final_supplement = math.ceil(r["base_supplement"] + hourly_gap * r["hours_worked"])
 
         r["tip_amount"] = tip
         r["tip_per_hour"] = tip_per_hour
         r["hourly_gap"] = hourly_gap
         r["supplement"] = final_supplement
-        r["total"] = round(tip + final_supplement, 2)
+        r["total"] = tip + final_supplement
 
 
     today = date.today().isoformat()
