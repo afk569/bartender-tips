@@ -81,7 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
             _breakdownRow('השלמה בסיסית', '₪${w.baseSupplement.floor()}', Colors.white70),
             
             const Divider(color: Colors.white12, height: 24),
-            
+            // more comments
             // 4. חישוב פער
             if (hasGap) ...[
               
