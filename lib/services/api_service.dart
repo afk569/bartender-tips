@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/worker.dart';
 
-const String baseUrl = 'http://10.100.102.44:8000';
+const String baseUrl = 'https://bartender-tips-backend-production.up.railway.app';
 
 class ApiService {
   // ── Workers ───────────────────────────────────────────────────────────────
